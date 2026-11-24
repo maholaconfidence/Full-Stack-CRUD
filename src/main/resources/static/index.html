@@ -2,9 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>User Registration</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body>
+<div class="main-grid">
+    <div class="search-form">
+<div>
+    <h2 class="header-text">Register Form</h2>
+</div>
+        <form id="userForm" class="inputDetails">
+            <div>
+                <label for="name" class="nameLabel">
+                   Full Name
+                </label>
+                <input id="name" placeholder="Enter your name" required type="text" class="inputName">
+            </div>
+            <div>
+                <label for="email" class="emailHolder">
+                   Email Adress
+                </label>
+                <input id="email" class="inputEmail" required type="email" placeholder="Enter your mail"/>
 
+            </div>
+            <button type="submit" class="btnSubmit">Register User</button>
+            </form>
+                <p id="message" class="paragraph"></p>
+
+        </div>
+
+   </div>
+<script>
+    const userForm = document.getElementById("userForm");
+
+    userForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const userData = {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+        };
+
+        try {
+            const response = await fetch("/api/users", {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json",
+                },
+
+                body: JSON.stringify(userData),
+            });
+
+            const responseText = await response.text();
+
+            console.log("Status:", response.status);
+            console.log("Response:", responseText);
+
+            if (!response.ok) {
+                throw new Error(`Server error ${response.status}: ${responseText}`);
+            }
+
+            const result = JSON.parse(responseText);
+
+            document.getElementById("message").innerText =
+                "User saved successfully! : " +result.name;
+
+            console.log(result.name)
+
+            userForm.reset();
+        } catch (error) {
+            console.error("Error:", error);
+
+            document.getElementById("message").innerText = error.message;
+        }
+    });
+</script>
 </body>
 </html>
